@@ -3,11 +3,16 @@
     "activeCommit": 0,
     "commits": [
         {
+<<<<<<< HEAD
             "activePatchIndex": 5,
+=======
+            "activePatchIndex": 0,
+>>>>>>> 9cde50e (make hw-1)
             "patches": [
                 {
                     "date": 1680606349415,
                     "content": "Index: \n===================================================================\n--- \n+++ \n"
+<<<<<<< HEAD
                 },
                 {
                     "date": 1681222112156,
@@ -28,6 +33,8 @@
                 {
                     "date": 1681223350782,
                     "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,6 +1,6 @@\n function sum(a, b) {\n-  if (typeof a != Number || typeof b != Number) {\n+  if (typeof a !== \"number\" || typeof b !== \"number\") {\n     throw new TypeError(\"Оба параметра должны быть числовыми!\");\n   }\n   return a + b;\n }\n"
+=======
+>>>>>>> 9cde50e (make hw-1)
                 }
             ],
             "date": 1680606349415,
