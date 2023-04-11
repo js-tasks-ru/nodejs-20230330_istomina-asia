@@ -1,0 +1,22 @@
+{
+    "sourceFile": "02-event-loop/01-events-order/index.js",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 1,
+            "patches": [
+                {
+                    "date": 1681221238724,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                },
+                {
+                    "date": 1681221263391,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,7 +1,7 @@\n const intervalId = setInterval(() => {\r\n   console.log(\"James\");\r\n-}, 1000);\r\n+}, 3000);\r\n \r\n setTimeout(() => {\r\n   const promise = new Promise((resolve) => {\r\n     console.log(\"Richard\");\r\n@@ -14,9 +14,9 @@\n     setTimeout(() => {\r\n       console.log(\"Michael\");\r\n \r\n       clearInterval(intervalId);\r\n-    }, 1000);\r\n+    }, 3000);\r\n   });\r\n \r\n   console.log(\"John\");\r\n-}, 1000);\r\n+}, 3000);\r\n"
+                }
+            ],
+            "date": 1681221238724,
+            "name": "Commit-0",
+            "content": "const intervalId = setInterval(() => {\r\n  console.log('James');\r\n}, 1000);\r\n\r\nsetTimeout(() => {\r\n  const promise = new Promise((resolve) => {\r\n    console.log('Richard');\r\n    resolve('Robert');\r\n  });\r\n\r\n  promise\r\n      .then((value) => {\r\n        console.log(value);\r\n\r\n        setTimeout(() => {\r\n          console.log('Michael');\r\n\r\n          clearInterval(intervalId);\r\n        }, 1000);\r\n      });\r\n\r\n  console.log('John');\r\n}, 1000);\r\n"
+        }
+    ]
+}

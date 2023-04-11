@@ -1,0 +1,26 @@
+{
+    "sourceFile": "02-event-loop/01-events-order/solution.txt",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 2,
+            "patches": [
+                {
+                    "date": 1681220545276,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                },
+                {
+                    "date": 1681221132711,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -3,5 +3,15 @@\n John\r\n Richard\r\n Robert\r\n James\r\n+Michael\r\n+\r\n+or\r\n+\r\n+James\r\n+James\r\n+Richard\r\n+John\r\n+Robert\r\n+James\r\n Michael\n\\ No newline at end of file\n"
+                },
+                {
+                    "date": 1681221489731,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,4 +1,10 @@\n+У меня было 2 варианта, потому что я не знала наверняка,\r\n+выполняется ли сам промис сразу или тоже ставится в очередь микрозадач.\r\n+\r\n+А просчиталась я в том, что думала что setInterval начинает выполняться сразу,  а не через заданное время.\r\n+\r\n+\r\n James\r\n James\r\n John\r\n Richard\r\n"
+                }
+            ],
+            "date": 1681220545276,
+            "name": "Commit-0",
+            "content": "James\r\nJames\r\nJohn\r\nRichard\r\nRobert\r\nJames\r\nMichael"
+        }
+    ]
+}
