@@ -1,0 +1,22 @@
+{
+    "sourceFile": "01-intro/01-sum/test/sum.test.js",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 1,
+            "patches": [
+                {
+                    "date": 1681222330562,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                },
+                {
+                    "date": 1681222375854,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,20 +1,20 @@\n-const sum = require(\"../sum\");\n-const expect = require(\"chai\").expect;\n+const sum = require('../sum');\n+const expect = require('chai').expect;\n \n-describe(\"intro/sum\", () => {\n-  describe(\"функция sum\", () => {\n-    it(\"складывает два числа\", () => {\n+describe('intro/sum', () => {\n+  describe('функция sum', () => {\n+    it('складывает два числа', () => {\n       expect(sum(1, 2)).to.equal(3);\n     });\n \n     [\n-      [\"1\", []],\n-      [\"1\", \"1\"],\n-      [1, \"1\"],\n-      [\"1\", 1],\n+      ['1', []],\n+      ['1', '1'],\n+      [1, '1'],\n+      ['1', 1],\n     ].forEach(([a, b]) => {\n-      it(\"бросает TypeError, если аргументы - не числа\", () => {\n+      it('бросает TypeError, если аргументы - не числа', () => {\n         expect(() => sum(a, b)).throw(TypeError);\n       });\n     });\n   });\n"
+                }
+            ],
+            "date": 1681222330562,
+            "name": "Commit-0",
+            "content": "const sum = require('../sum');\nconst expect = require('chai').expect;\n\ndescribe('intro/sum', () => {\n  describe('функция sum', () => {\n    it('складывает два числа', () => {\n      expect(sum(1, 2)).to.equal(3);\n    });\n\n    [\n      ['1', []],\n      ['1', '1'],\n      [1, '1'],\n      ['1', 1],\n    ].forEach(([a, b]) => {\n      it('бросает TypeError, если аргументы - не числа', () => {\n        expect(() => sum(a, b)).throw(TypeError);\n      });\n    })\n  });\n});\n"
+        }
+    ]
+}

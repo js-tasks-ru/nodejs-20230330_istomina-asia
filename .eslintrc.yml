@@ -11,3 +11,8 @@ rules:
     - code: 100
   require-jsdoc:
     - off
+  eqeqeq:
+    - off
+  quotes:
+    - warn
+    - double
