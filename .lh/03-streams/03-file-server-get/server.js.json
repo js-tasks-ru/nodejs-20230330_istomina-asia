@@ -1,0 +1,30 @@
+{
+    "sourceFile": "03-streams/03-file-server-get/server.js",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 3,
+            "patches": [
+                {
+                    "date": 1681719415866,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                },
+                {
+                    "date": 1681719546994,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -16,9 +16,9 @@\n       if (pathname.includes('/')) {\r\n         res.statusCode = 400;\r\n         res.end('Bad request!');\r\n       }\r\n-  \r\n+      const\r\n       const fileStream = fs.createReadStream(filepath);\r\n       fileStream.pipe(res);\r\n       fileStream.on('error', (error) => {\r\n         switch (error.code) {\r\n"
+                },
+                {
+                    "date": 1681719618397,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -16,9 +16,14 @@\n       if (pathname.includes('/')) {\r\n         res.statusCode = 400;\r\n         res.end('Bad request!');\r\n       }\r\n-      const\r\n+      fs.writeFile(filepath, '', (err) => {\r\n+        if (err) {\r\n+          return console.log(err);\r\n+        }\r\n+        console.log('The file was created!');\r\n+      });\r\n       const fileStream = fs.createReadStream(filepath);\r\n       fileStream.pipe(res);\r\n       fileStream.on('error', (error) => {\r\n         switch (error.code) {\r\n"
+                },
+                {
+                    "date": 1681719671360,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -16,14 +16,8 @@\n       if (pathname.includes('/')) {\r\n         res.statusCode = 400;\r\n         res.end('Bad request!');\r\n       }\r\n-      fs.writeFile(filepath, '', (err) => {\r\n-        if (err) {\r\n-          return console.log(err);\r\n-        }\r\n-        console.log('The file was created!');\r\n-      });\r\n       const fileStream = fs.createReadStream(filepath);\r\n       fileStream.pipe(res);\r\n       fileStream.on('error', (error) => {\r\n         switch (error.code) {\r\n"
+                }
+            ],
+            "date": 1681719415866,
+            "name": "Commit-0",
+            "content": "// const url = require('url');\r\nconst http = require('http');\r\nconst path = require('path');\r\nconst fs = require('node:fs');\r\n\r\nconst server = new http.Server();\r\n\r\nserver.on('request', (req, res) => {\r\n  const url = new URL(req.url, `http://${req.headers.host}`);\r\n  const pathname = url.pathname.slice(1);\r\n\r\n  const filepath = path.join(__dirname, 'files', pathname);\r\n\r\n  switch (req.method) {\r\n    case 'GET':\r\n      if (pathname.includes('/')) {\r\n        res.statusCode = 400;\r\n        res.end('Bad request!');\r\n      }\r\n  \r\n      const fileStream = fs.createReadStream(filepath);\r\n      fileStream.pipe(res);\r\n      fileStream.on('error', (error) => {\r\n        switch (error.code) {\r\n          case 'ENOENT':\r\n            res.statusCode = 404;\r\n            res.end('File not found:(');\r\n            break;\r\n          default:\r\n            res.statusCode = 500;\r\n            res.end('Internal server error:/');\r\n        }\r\n      });\r\n      fileStream.on('aborted', () => {\r\n        fileStream.destroy();\r\n      });\r\n\r\n      break;\r\n\r\n    default:\r\n      res.statusCode = 501;\r\n      res.end('Not implemented');\r\n  }\r\n});\r\n\r\nmodule.exports = server;\r\n"
+        }
+    ]
+}

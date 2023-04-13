@@ -1,0 +1,202 @@
+{
+    "sourceFile": "03-streams/04-file-server-post/server.js",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 46,
+            "patches": [
+                {
+                    "date": 1681714724377,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                },
+                {
+                    "date": 1681714765253,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,8 +1,8 @@\n-const url = require('url');\r\n+// const url = require('url');\r\n const http = require('http');\r\n const path = require('path');\r\n-const fs = require('node: fs')\r\n+const fs = require('node: fs');\r\n \r\n const server = new http.Server();\r\n \r\n server.on('request', (req, res) => {\r\n"
+                },
+                {
+                    "date": 1681715051628,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -5,8 +5,9 @@\n \r\n const server = new http.Server();\r\n \r\n server.on('request', (req, res) => {\r\n+  console.log(req);\r\n   const url = new URL(req.url, `http://${req.headers.host}`);\r\n   const pathname = url.pathname.slice(1);\r\n \r\n   const filepath = path.join(__dirname, 'files', pathname);\r\n"
+                },
+                {
+                    "date": 1681715122429,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,8 +1,8 @@\n // const url = require('url');\r\n const http = require('http');\r\n const path = require('path');\r\n-const fs = require('node: fs');\r\n+const fs = require('node:fs');\r\n \r\n const server = new http.Server();\r\n \r\n server.on('request', (req, res) => {\r\n"
+                },
+                {
+                    "date": 1681715847320,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,8 +1,9 @@\n // const url = require('url');\r\n const http = require('http');\r\n const path = require('path');\r\n const fs = require('node:fs');\r\n+const LimitSizeStream = require('./LimitSizeStream');\r\n \r\n const server = new http.Server();\r\n \r\n server.on('request', (req, res) => {\r\n@@ -17,9 +18,13 @@\n       if (pathname.includes('/')) {\r\n         res.statusCode = 400;\r\n         res.end('Bad request!');\r\n       }\r\n+      const limitedStream = new LimitSizeStream({limit: 8, encoding: 'utf-8'}); // 8 байт\r\n+      limitedStream.write('hello');\r\n       const fileStream = fs.createReadStream(filepath);\r\n+      limitedStream.pipe(fileStream);\r\n+\r\n       fileStream.pipe(res);\r\n       fileStream.on('error', (error) => {\r\n         switch (error.code) {\r\n           case 'ENOENT':\r\n"
+                },
+                {
+                    "date": 1681718485380,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -18,9 +18,9 @@\n       if (pathname.includes('/')) {\r\n         res.statusCode = 400;\r\n         res.end('Bad request!');\r\n       }\r\n-      const limitedStream = new LimitSizeStream({limit: 8, encoding: 'utf-8'}); // 8 байт\r\n+      const limitedStream = new LimitSizeStream({limit: 1024 * 1024, encoding: 'utf-8'});\r\n       limitedStream.write('hello');\r\n       const fileStream = fs.createReadStream(filepath);\r\n       limitedStream.pipe(fileStream);\r\n \r\n"
+                },
+                {
+                    "date": 1681718813658,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -18,9 +18,22 @@\n       if (pathname.includes('/')) {\r\n         res.statusCode = 400;\r\n         res.end('Bad request!');\r\n       }\r\n-      const limitedStream = new LimitSizeStream({limit: 1024 * 1024, encoding: 'utf-8'});\r\n+      const limitedStream = new LimitSizeStream({\r\n+        limit: 1024 * 1024,\r\n+        encoding: 'utf-8',\r\n+      });\r\n+      let body = '';\r\n+      // Get the data as utf8 strings.\r\n+      // If an encoding is not set, Buffer objects will be received.\r\n+      req.setEncoding('utf8');\r\n+\r\n+      // Readable streams emit 'data' events once a listener is added.\r\n+      req.on('data', (chunk) => {\r\n+        body += chunk;\r\n+        console.log(body);\r\n+      });\r\n       limitedStream.write('hello');\r\n       const fileStream = fs.createReadStream(filepath);\r\n       limitedStream.pipe(fileStream);\r\n \r\n"
+                },
+                {
+                    "date": 1681719140817,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -32,13 +32,16 @@\n       req.on('data', (chunk) => {\r\n         body += chunk;\r\n         console.log(body);\r\n       });\r\n-      limitedStream.write('hello');\r\n+      limitedStream.write(body);\r\n       const fileStream = fs.createReadStream(filepath);\r\n-      limitedStream.pipe(fileStream);\r\n+      limitedStream.pipe(fileStream).pipe(res);\r\n \r\n-      fileStream.pipe(res);\r\n+      limitedStream.on('error', (error) => {\r\n+        console.log('ашыпк', error.message);\r\n+      });\r\n+\r\n       fileStream.on('error', (error) => {\r\n         switch (error.code) {\r\n           case 'ENOENT':\r\n             res.statusCode = 404;\r\n"
+                },
+                {
+                    "date": 1681719686029,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -33,8 +33,10 @@\n         body += chunk;\r\n         console.log(body);\r\n       });\r\n       limitedStream.write(body);\r\n+      \r\n+\r\n       const fileStream = fs.createReadStream(filepath);\r\n       limitedStream.pipe(fileStream).pipe(res);\r\n \r\n       limitedStream.on('error', (error) => {\r\n"
+                },
+                {
+                    "date": 1681719719674,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -33,10 +33,15 @@\n         body += chunk;\r\n         console.log(body);\r\n       });\r\n       limitedStream.write(body);\r\n-      \r\n \r\n+      fs.writeFile(filepath, '', err => {\r\n+        if (err) {\r\n+          return console.log(err);\r\n+        }\r\n+        console.log('The file was created!');\r\n+      });\r\n       const fileStream = fs.createReadStream(filepath);\r\n       limitedStream.pipe(fileStream).pipe(res);\r\n \r\n       limitedStream.on('error', (error) => {\r\n"
+                },
+                {
+                    "date": 1681719741647,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -34,9 +34,9 @@\n         console.log(body);\r\n       });\r\n       limitedStream.write(body);\r\n \r\n-      fs.writeFile(filepath, '', err => {\r\n+      fs.writeFile(filepath, '', (err) => {\r\n         if (err) {\r\n           return console.log(err);\r\n         }\r\n         console.log('The file was created!');\r\n"
+                },
+                {
+                    "date": 1681719765086,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -6,9 +6,8 @@\n \r\n const server = new http.Server();\r\n \r\n server.on('request', (req, res) => {\r\n-  console.log(req);\r\n   const url = new URL(req.url, `http://${req.headers.host}`);\r\n   const pathname = url.pathname.slice(1);\r\n \r\n   const filepath = path.join(__dirname, 'files', pathname);\r\n"
+                },
+                {
+                    "date": 1681720459913,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -26,23 +26,17 @@\n       // Get the data as utf8 strings.\r\n       // If an encoding is not set, Buffer objects will be received.\r\n       req.setEncoding('utf8');\r\n \r\n-      // Readable streams emit 'data' events once a listener is added.\r\n-      req.on('data', (chunk) => {\r\n-        body += chunk;\r\n-        console.log(body);\r\n-      });\r\n-      limitedStream.write(body);\r\n \r\n       fs.writeFile(filepath, '', (err) => {\r\n         if (err) {\r\n           return console.log(err);\r\n         }\r\n         console.log('The file was created!');\r\n       });\r\n       const fileStream = fs.createReadStream(filepath);\r\n-      limitedStream.pipe(fileStream).pipe(res);\r\n+      req.pipe(limitedStream).pipe(filepath);\r\n \r\n       limitedStream.on('error', (error) => {\r\n         console.log('ашыпк', error.message);\r\n       });\r\n"
+                },
+                {
+                    "date": 1681720610479,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -21,9 +21,8 @@\n       const limitedStream = new LimitSizeStream({\r\n         limit: 1024 * 1024,\r\n         encoding: 'utf-8',\r\n       });\r\n-      let body = '';\r\n       // Get the data as utf8 strings.\r\n       // If an encoding is not set, Buffer objects will be received.\r\n       req.setEncoding('utf8');\r\n \r\n"
+                },
+                {
+                    "date": 1681720678672,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -26,15 +26,9 @@\n       // If an encoding is not set, Buffer objects will be received.\r\n       req.setEncoding('utf8');\r\n \r\n \r\n-      fs.writeFile(filepath, '', (err) => {\r\n-        if (err) {\r\n-          return console.log(err);\r\n-        }\r\n-        console.log('The file was created!');\r\n-      });\r\n-      const fileStream = fs.createReadStream(filepath);\r\n+      const fileStream = fs.createWriteStream(filepath);\r\n       req.pipe(limitedStream).pipe(filepath);\r\n \r\n       limitedStream.on('error', (error) => {\r\n         console.log('ашыпк', error.message);\r\n"
+                },
+                {
+                    "date": 1681720711264,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -27,9 +27,9 @@\n       req.setEncoding('utf8');\r\n \r\n \r\n       const fileStream = fs.createWriteStream(filepath);\r\n-      req.pipe(limitedStream).pipe(filepath);\r\n+      req.pipe(limitedStream).pipe(fileStream);\r\n \r\n       limitedStream.on('error', (error) => {\r\n         console.log('ашыпк', error.message);\r\n       });\r\n"
+                },
+                {
+                    "date": 1681721118127,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -29,10 +29,11 @@\n \r\n       const fileStream = fs.createWriteStream(filepath);\r\n       req.pipe(limitedStream).pipe(fileStream);\r\n \r\n-      limitedStream.on('error', (error) => {\r\n-        console.log('ашыпк', error.message);\r\n+      limitedStream.on('end', () => {\r\n+        res('all data has been sent')\r\n+      })\r\n       });\r\n \r\n       fileStream.on('error', (error) => {\r\n         switch (error.code) {\r\n"
+                },
+                {
+                    "date": 1681721153993,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -25,15 +25,13 @@\n       // Get the data as utf8 strings.\r\n       // If an encoding is not set, Buffer objects will be received.\r\n       req.setEncoding('utf8');\r\n \r\n-\r\n       const fileStream = fs.createWriteStream(filepath);\r\n       req.pipe(limitedStream).pipe(fileStream);\r\n \r\n       limitedStream.on('end', () => {\r\n-        res('all data has been sent')\r\n-      })\r\n+        res('all data has been sent');\r\n       });\r\n \r\n       fileStream.on('error', (error) => {\r\n         switch (error.code) {\r\n"
+                },
+                {
+                    "date": 1681721202807,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -29,9 +29,9 @@\n       const fileStream = fs.createWriteStream(filepath);\r\n       req.pipe(limitedStream).pipe(fileStream);\r\n \r\n       limitedStream.on('end', () => {\r\n-        res('all data has been sent');\r\n+        res.end('all data has been sent');\r\n       });\r\n \r\n       fileStream.on('error', (error) => {\r\n         switch (error.code) {\r\n"
+                },
+                {
+                    "date": 1681721467181,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -45,8 +45,9 @@\n         }\r\n       });\r\n       fileStream.on('aborted', () => {\r\n         fileStream.destroy();\r\n+        fs.rm(filepath);\r\n       });\r\n \r\n       break;\r\n \r\n"
+                },
+                {
+                    "date": 1681724304146,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -28,9 +28,9 @@\n \r\n       const fileStream = fs.createWriteStream(filepath);\r\n       req.pipe(limitedStream).pipe(fileStream);\r\n \r\n-      limitedStream.on('end', () => {\r\n+      fileStream.on('end', () => {\r\n         res.end('all data has been sent');\r\n       });\r\n \r\n       fileStream.on('error', (error) => {\r\n"
+                },
+                {
+                    "date": 1681724399879,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -28,9 +28,9 @@\n \r\n       const fileStream = fs.createWriteStream(filepath);\r\n       req.pipe(limitedStream).pipe(fileStream);\r\n \r\n-      fileStream.on('end', () => {\r\n+      limitedStream.on('end', () => {\r\n         res.end('all data has been sent');\r\n       });\r\n \r\n       fileStream.on('error', (error) => {\r\n"
+                },
+                {
+                    "date": 1681724795057,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -13,8 +13,13 @@\n   const filepath = path.join(__dirname, 'files', pathname);\r\n \r\n   switch (req.method) {\r\n     case 'POST':\r\n+      if (fs.exists(filepath)) {\r\n+        res.statusCode = 409;\r\n+        res.end('File already Exists');\r\n+        return;\r\n+      }\r\n       if (pathname.includes('/')) {\r\n         res.statusCode = 400;\r\n         res.end('Bad request!');\r\n       }\r\n@@ -32,8 +37,13 @@\n       limitedStream.on('end', () => {\r\n         res.end('all data has been sent');\r\n       });\r\n \r\n+      limitedStream.on('error', () => {\r\n+        res.statusCode = 413;\r\n+        res.end('Max size has been exceeded');\r\n+      });\r\n+\r\n       fileStream.on('error', (error) => {\r\n         switch (error.code) {\r\n           case 'ENOENT':\r\n             res.statusCode = 404;\r\n"
+                },
+                {
+                    "date": 1681724891516,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -13,9 +13,9 @@\n   const filepath = path.join(__dirname, 'files', pathname);\r\n \r\n   switch (req.method) {\r\n     case 'POST':\r\n-      if (fs.exists(filepath)) {\r\n+      if (fs.existsSync(filepath)) {\r\n         res.statusCode = 409;\r\n         res.end('File already Exists');\r\n         return;\r\n       }\r\n"
+                },
+                {
+                    "date": 1681725016330,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -16,9 +16,8 @@\n     case 'POST':\r\n       if (fs.existsSync(filepath)) {\r\n         res.statusCode = 409;\r\n         res.end('File already Exists');\r\n-        return;\r\n       }\r\n       if (pathname.includes('/')) {\r\n         res.statusCode = 400;\r\n         res.end('Bad request!');\r\n"
+                },
+                {
+                    "date": 1681725631358,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -16,12 +16,14 @@\n     case 'POST':\r\n       if (fs.existsSync(filepath)) {\r\n         res.statusCode = 409;\r\n         res.end('File already Exists');\r\n+        return;\r\n       }\r\n       if (pathname.includes('/')) {\r\n         res.statusCode = 400;\r\n         res.end('Bad request!');\r\n+        return;\r\n       }\r\n       const limitedStream = new LimitSizeStream({\r\n         limit: 1024 * 1024,\r\n         encoding: 'utf-8',\r\n"
+                },
+                {
+                    "date": 1681725696319,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -14,8 +14,9 @@\n \r\n   switch (req.method) {\r\n     case 'POST':\r\n       if (fs.existsSync(filepath)) {\r\n+        console.log('eeeee');\r\n         res.statusCode = 409;\r\n         res.end('File already Exists');\r\n         return;\r\n       }\r\n"
+                },
+                {
+                    "date": 1681725937779,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -39,9 +39,10 @@\n       limitedStream.on('end', () => {\r\n         res.end('all data has been sent');\r\n       });\r\n \r\n-      limitedStream.on('error', () => {\r\n+      limitedStream.on('error', (err) => {\r\n+        console.log(err.name);\r\n         res.statusCode = 413;\r\n         res.end('Max size has been exceeded');\r\n       });\r\n \r\n"
+                },
+                {
+                    "date": 1681726264971,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -36,8 +36,9 @@\n       const fileStream = fs.createWriteStream(filepath);\r\n       req.pipe(limitedStream).pipe(fileStream);\r\n \r\n       limitedStream.on('end', () => {\r\n+        res.statusCode = 201;\r\n         res.end('all data has been sent');\r\n       });\r\n \r\n       limitedStream.on('error', (err) => {\r\n"
+                },
+                {
+                    "date": 1681726426507,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -30,9 +30,8 @@\n         encoding: 'utf-8',\r\n       });\r\n       // Get the data as utf8 strings.\r\n       // If an encoding is not set, Buffer objects will be received.\r\n-      req.setEncoding('utf8');\r\n \r\n       const fileStream = fs.createWriteStream(filepath);\r\n       req.pipe(limitedStream).pipe(fileStream);\r\n \r\n"
+                },
+                {
+                    "date": 1681726516917,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -57,8 +57,9 @@\n             res.end('Internal server error:/');\r\n         }\r\n       });\r\n       fileStream.on('aborted', () => {\r\n+        limitedStream.destroy();\r\n         fileStream.destroy();\r\n         fs.rm(filepath);\r\n       });\r\n \r\n"
+                },
+                {
+                    "date": 1681726598906,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -59,9 +59,11 @@\n       });\r\n       fileStream.on('aborted', () => {\r\n         limitedStream.destroy();\r\n         fileStream.destroy();\r\n-        fs.rm(filepath);\r\n+        fileStream.on('close', () => {\r\n+          fs.rm(filepath);\r\n+        });\r\n       });\r\n \r\n       break;\r\n \r\n"
+                },
+                {
+                    "date": 1681728546604,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -46,17 +46,10 @@\n         res.end('Max size has been exceeded');\r\n       });\r\n \r\n       fileStream.on('error', (error) => {\r\n-        switch (error.code) {\r\n-          case 'ENOENT':\r\n-            res.statusCode = 404;\r\n-            res.end('File not found:(');\r\n-            break;\r\n-          default:\r\n-            res.statusCode = 500;\r\n-            res.end('Internal server error:/');\r\n-        }\r\n+        res.statusCode = 500;\r\n+        res.end('Internal server error:/');\r\n       });\r\n       fileStream.on('aborted', () => {\r\n         limitedStream.destroy();\r\n         fileStream.destroy();\r\n"
+                },
+                {
+                    "date": 1681728757308,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -19,8 +19,9 @@\n         res.statusCode = 409;\r\n         res.end('File already Exists');\r\n         return;\r\n       }\r\n+      console.log('ooo');\r\n       if (pathname.includes('/')) {\r\n         res.statusCode = 400;\r\n         res.end('Bad request!');\r\n         return;\r\n"
+                },
+                {
+                    "date": 1681728851688,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -38,14 +38,16 @@\n \r\n       limitedStream.on('end', () => {\r\n         res.statusCode = 201;\r\n         res.end('all data has been sent');\r\n+        return;\r\n       });\r\n \r\n       limitedStream.on('error', (err) => {\r\n         console.log(err.name);\r\n         res.statusCode = 413;\r\n         res.end('Max size has been exceeded');\r\n+        return;\r\n       });\r\n \r\n       fileStream.on('error', (error) => {\r\n         res.statusCode = 500;\r\n"
+                },
+                {
+                    "date": 1681730357542,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -43,14 +43,18 @@\n       });\r\n \r\n       limitedStream.on('error', (err) => {\r\n         console.log(err.name);\r\n+        limitedStream.destroy();\r\n+        fileStream.destroy();\r\n         res.statusCode = 413;\r\n         res.end('Max size has been exceeded');\r\n         return;\r\n       });\r\n \r\n       fileStream.on('error', (error) => {\r\n+        limitedStream.destroy();\r\n+        fileStream.destroy();\r\n         res.statusCode = 500;\r\n         res.end('Internal server error:/');\r\n       });\r\n       fileStream.on('aborted', () => {\r\n"
+                },
+                {
+                    "date": 1681730641731,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -6,8 +6,11 @@\n \r\n const server = new http.Server();\r\n \r\n server.on('request', (req, res) => {\r\n+  res.on('error', () => {\r\n+    console.log('errrrrr');\r\n+  });\r\n   const url = new URL(req.url, `http://${req.headers.host}`);\r\n   const pathname = url.pathname.slice(1);\r\n \r\n   const filepath = path.join(__dirname, 'files', pathname);\r\n"
+                },
+                {
+                    "date": 1681730742019,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -6,11 +6,8 @@\n \r\n const server = new http.Server();\r\n \r\n server.on('request', (req, res) => {\r\n-  res.on('error', () => {\r\n-    console.log('errrrrr');\r\n-  });\r\n   const url = new URL(req.url, `http://${req.headers.host}`);\r\n   const pathname = url.pathname.slice(1);\r\n \r\n   const filepath = path.join(__dirname, 'files', pathname);\r\n"
+                },
+                {
+                    "date": 1681730795534,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -14,14 +14,12 @@\n \r\n   switch (req.method) {\r\n     case 'POST':\r\n       if (fs.existsSync(filepath)) {\r\n-        console.log('eeeee');\r\n         res.statusCode = 409;\r\n         res.end('File already Exists');\r\n         return;\r\n       }\r\n-      console.log('ooo');\r\n       if (pathname.includes('/')) {\r\n         res.statusCode = 400;\r\n         res.end('Bad request!');\r\n         return;\r\n@@ -42,9 +40,8 @@\n         return;\r\n       });\r\n \r\n       limitedStream.on('error', (err) => {\r\n-        console.log(err.name);\r\n         limitedStream.destroy();\r\n         fileStream.destroy();\r\n         res.statusCode = 413;\r\n         res.end('Max size has been exceeded');\r\n"
+                },
+                {
+                    "date": 1681731792390,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,5 +1,5 @@\n-// const url = require('url');\r\n+/* // const url = require('url');\r\n const http = require('http');\r\n const path = require('path');\r\n const fs = require('node:fs');\r\n const LimitSizeStream = require('./LimitSizeStream');\r\n@@ -70,4 +70,71 @@\n   }\r\n });\r\n \r\n module.exports = server;\r\n+ */\r\n+const url = require('url');\r\n+const http = require('http');\r\n+const path = require('path');\r\n+const LimitSizeStream = require('./LimitSizeStream');\r\n+const fs = require('fs');\r\n+\r\n+const server = new http.Server();\r\n+\r\n+server.on('request', (req, res) => {\r\n+  const url = new URL(req.url, `http://${req.headers.host}`);\r\n+  const pathname = url.pathname.slice(1);\r\n+\r\n+  const filepath = path.join(__dirname, 'files', pathname);\r\n+\r\n+  switch (req.method) {\r\n+    case 'POST':\r\n+      if (fs.existsSync(filepath)) {\r\n+        res.statusCode = 409;\r\n+        res.end('Such file already exists');\r\n+        break;\r\n+      }\r\n+\r\n+      const limitedStream = new LimitSizeStream({limit: 1048576});\r\n+      const outStream = fs.createWriteStream(filepath);\r\n+      limitedStream.pipe(outStream);\r\n+\r\n+      req.pipe(limitedStream);\r\n+\r\n+      outStream.on('finish', () => {\r\n+        res.statusCode = 201;\r\n+        res.end('Ok');\r\n+      });\r\n+\r\n+      req.on('error', () => {\r\n+        limitedStream.destroy();\r\n+        outStream.destroy();\r\n+        fs.unlinkSync(filepath);\r\n+      });\r\n+\r\n+      outStream.on('error', (error) => {\r\n+        if (error.code === 'ENOENT') {\r\n+          res.statusCode = 400;\r\n+          res.end('Вложенные пути не поддерживаются');\r\n+        }\r\n+      });\r\n+\r\n+      limitedStream.on('error', (error) => {\r\n+        if (error.code === 'LIMIT_EXCEEDED') {\r\n+          outStream.destroy();\r\n+          fs.unlinkSync(filepath);\r\n+          res.statusCode = 413;\r\n+          res.end('Тяжело');\r\n+        } else {\r\n+          res.statusCode = 500;\r\n+          res.end();\r\n+        }\r\n+      });\r\n+\r\n+      break;\r\n+    default:\r\n+      res.statusCode = 501;\r\n+      res.end('Not implemented');\r\n+  }\r\n+});\r\n+\r\n+module.exports = server;\r\n"
+                },
+                {
+                    "date": 1681731816365,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -71,9 +71,9 @@\n });\r\n \r\n module.exports = server;\r\n  */\r\n-const url = require('url');\r\n+// const url = require('url');\r\n const http = require('http');\r\n const path = require('path');\r\n const LimitSizeStream = require('./LimitSizeStream');\r\n const fs = require('fs');\r\n"
+                },
+                {
+                    "date": 1681731850116,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,5 +1,5 @@\n-/* // const url = require('url');\r\n+// const url = require('url');\r\n const http = require('http');\r\n const path = require('path');\r\n const fs = require('node:fs');\r\n const LimitSizeStream = require('./LimitSizeStream');\r\n@@ -70,71 +70,4 @@\n   }\r\n });\r\n \r\n module.exports = server;\r\n- */\r\n-// const url = require('url');\r\n-const http = require('http');\r\n-const path = require('path');\r\n-const LimitSizeStream = require('./LimitSizeStream');\r\n-const fs = require('fs');\r\n-\r\n-const server = new http.Server();\r\n-\r\n-server.on('request', (req, res) => {\r\n-  const url = new URL(req.url, `http://${req.headers.host}`);\r\n-  const pathname = url.pathname.slice(1);\r\n-\r\n-  const filepath = path.join(__dirname, 'files', pathname);\r\n-\r\n-  switch (req.method) {\r\n-    case 'POST':\r\n-      if (fs.existsSync(filepath)) {\r\n-        res.statusCode = 409;\r\n-        res.end('Such file already exists');\r\n-        break;\r\n-      }\r\n-\r\n-      const limitedStream = new LimitSizeStream({limit: 1048576});\r\n-      const outStream = fs.createWriteStream(filepath);\r\n-      limitedStream.pipe(outStream);\r\n-\r\n-      req.pipe(limitedStream);\r\n-\r\n-      outStream.on('finish', () => {\r\n-        res.statusCode = 201;\r\n-        res.end('Ok');\r\n-      });\r\n-\r\n-      req.on('error', () => {\r\n-        limitedStream.destroy();\r\n-        outStream.destroy();\r\n-        fs.unlinkSync(filepath);\r\n-      });\r\n-\r\n-      outStream.on('error', (error) => {\r\n-        if (error.code === 'ENOENT') {\r\n-          res.statusCode = 400;\r\n-          res.end('Вложенные пути не поддерживаются');\r\n-        }\r\n-      });\r\n-\r\n-      limitedStream.on('error', (error) => {\r\n-        if (error.code === 'LIMIT_EXCEEDED') {\r\n-          outStream.destroy();\r\n-          fs.unlinkSync(filepath);\r\n-          res.statusCode = 413;\r\n-          res.end('Тяжело');\r\n-        } else {\r\n-          res.statusCode = 500;\r\n-          res.end();\r\n-        }\r\n-      });\r\n-\r\n-      break;\r\n-    default:\r\n-      res.statusCode = 501;\r\n-      res.end('Not implemented');\r\n-  }\r\n-});\r\n-\r\n-module.exports = server;\r\n"
+                },
+                {
+                    "date": 1681731921382,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -16,21 +16,17 @@\n     case 'POST':\r\n       if (fs.existsSync(filepath)) {\r\n         res.statusCode = 409;\r\n         res.end('File already Exists');\r\n-        return;\r\n       }\r\n       if (pathname.includes('/')) {\r\n         res.statusCode = 400;\r\n         res.end('Bad request!');\r\n-        return;\r\n       }\r\n       const limitedStream = new LimitSizeStream({\r\n         limit: 1024 * 1024,\r\n         encoding: 'utf-8',\r\n       });\r\n-      // Get the data as utf8 strings.\r\n-      // If an encoding is not set, Buffer objects will be received.\r\n \r\n       const fileStream = fs.createWriteStream(filepath);\r\n       req.pipe(limitedStream).pipe(fileStream);\r\n \r\n"
+                },
+                {
+                    "date": 1681735036909,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -23,9 +23,8 @@\n         res.end('Bad request!');\r\n       }\r\n       const limitedStream = new LimitSizeStream({\r\n         limit: 1024 * 1024,\r\n-        encoding: 'utf-8',\r\n       });\r\n \r\n       const fileStream = fs.createWriteStream(filepath);\r\n       req.pipe(limitedStream).pipe(fileStream);\r\n"
+                },
+                {
+                    "date": 1681735153173,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -35,18 +35,24 @@\n         return;\r\n       });\r\n \r\n       limitedStream.on('error', (err) => {\r\n+        fileStream.destroy();\r\n         limitedStream.destroy();\r\n-        fileStream.destroy();\r\n+        fileStream.on('close', () => {\r\n+          fs.rm(filepath);\r\n+        });\r\n         res.statusCode = 413;\r\n         res.end('Max size has been exceeded');\r\n         return;\r\n       });\r\n \r\n       fileStream.on('error', (error) => {\r\n         limitedStream.destroy();\r\n         fileStream.destroy();\r\n+        fileStream.on('close', () => {\r\n+          fs.rm(filepath);\r\n+        });\r\n         res.statusCode = 500;\r\n         res.end('Internal server error:/');\r\n       });\r\n       fileStream.on('aborted', () => {\r\n"
+                },
+                {
+                    "date": 1681737169729,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -35,10 +35,10 @@\n         return;\r\n       });\r\n \r\n       limitedStream.on('error', (err) => {\r\n+        limitedStream.destroy();\r\n         fileStream.destroy();\r\n-        limitedStream.destroy();\r\n         fileStream.on('close', () => {\r\n           fs.rm(filepath);\r\n         });\r\n         res.statusCode = 413;\r\n@@ -46,10 +46,10 @@\n         return;\r\n       });\r\n \r\n       fileStream.on('error', (error) => {\r\n+        fileStream.destroy();\r\n         limitedStream.destroy();\r\n-        fileStream.destroy();\r\n         fileStream.on('close', () => {\r\n           fs.rm(filepath);\r\n         });\r\n         res.statusCode = 500;\r\n"
+                },
+                {
+                    "date": 1681737482120,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -11,8 +11,10 @@\n   const pathname = url.pathname.slice(1);\r\n \r\n   const filepath = path.join(__dirname, 'files', pathname);\r\n \r\n+  req.on('error', (err) => console.log('ОШИБКА ЗАПРОСА', err.name));\r\n+\r\n   switch (req.method) {\r\n     case 'POST':\r\n       if (fs.existsSync(filepath)) {\r\n         res.statusCode = 409;\r\n"
+                }
+            ],
+            "date": 1681714724377,
+            "name": "Commit-0",
+            "content": "const url = require('url');\r\nconst http = require('http');\r\nconst path = require('path');\r\nconst fs = require('node: fs')\r\n\r\nconst server = new http.Server();\r\n\r\nserver.on('request', (req, res) => {\r\n  const url = new URL(req.url, `http://${req.headers.host}`);\r\n  const pathname = url.pathname.slice(1);\r\n\r\n  const filepath = path.join(__dirname, 'files', pathname);\r\n\r\n  switch (req.method) {\r\n    case 'POST':\r\n      if (pathname.includes('/')) {\r\n        res.statusCode = 400;\r\n        res.end('Bad request!');\r\n      }\r\n      const fileStream = fs.createReadStream(filepath);\r\n      fileStream.pipe(res);\r\n      fileStream.on('error', (error) => {\r\n        switch (error.code) {\r\n          case 'ENOENT':\r\n            res.statusCode = 404;\r\n            res.end('File not found:(');\r\n            break;\r\n          default:\r\n            res.statusCode = 500;\r\n            res.end('Internal server error:/');\r\n        }\r\n      });\r\n      fileStream.on('aborted', () => {\r\n        fileStream.destroy();\r\n      });\r\n\r\n      break;\r\n\r\n    default:\r\n      res.statusCode = 501;\r\n      res.end('Not implemented');\r\n  }\r\n});\r\n\r\nmodule.exports = server;\r\n"
+        }
+    ]
+}

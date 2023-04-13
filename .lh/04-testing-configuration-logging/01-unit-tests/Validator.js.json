@@ -1,0 +1,126 @@
+{
+    "sourceFile": "04-testing-configuration-logging/01-unit-tests/Validator.js",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 27,
+            "patches": [
+                {
+                    "date": 1681741438410,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                },
+                {
+                    "date": 1681741666823,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -5,8 +5,18 @@\n       Object.values(rules).some((rule) => !Object.keys(rule).includes('type'))\r\n     ) {\r\n       throw new Error('All rules must include type');\r\n     }\r\n+    if (\r\n+      Object.values(rules).some((rule) => !Object.keys(rule).includes('min'))\r\n+    ) {\r\n+      throw new Error('All rules must include min');\r\n+    }\r\n+    if (\r\n+      Object.values(rules).some((rule) => !Object.keys(rule).includes('max'))\r\n+    ) {\r\n+      throw new Error('All rules must include max');\r\n+    }\r\n   }\r\n \r\n   validate(obj) {\r\n     const errors = [];\r\n"
+                },
+                {
+                    "date": 1681742874029,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -15,8 +15,13 @@\n       Object.values(rules).some((rule) => !Object.keys(rule).includes('max'))\r\n     ) {\r\n       throw new Error('All rules must include max');\r\n     }\r\n+    if (\r\n+      Object.values(rules).some((rule) => !Object.keys(rule).includes('max'))\r\n+    ) {\r\n+      throw new Error('All rules must include max');\r\n+    }\r\n   }\r\n \r\n   validate(obj) {\r\n     const errors = [];\r\n"
+                },
+                {
+                    "date": 1681742947025,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -15,13 +15,13 @@\n       Object.values(rules).some((rule) => !Object.keys(rule).includes('max'))\r\n     ) {\r\n       throw new Error('All rules must include max');\r\n     }\r\n-    if (\r\n-      Object.values(rules).some((rule) => !Object.keys(rule).includes('max'))\r\n+    /* if (\r\n+      Object.values(rules).some((rule) => rule.max < rule.min)\r\n     ) {\r\n-      throw new Error('All rules must include max');\r\n-    }\r\n+      throw new Error('Max must not be lower than min');\r\n+    } */\r\n   }\r\n \r\n   validate(obj) {\r\n     const errors = [];\r\n"
+                },
+                {
+                    "date": 1681743056222,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -15,13 +15,13 @@\n       Object.values(rules).some((rule) => !Object.keys(rule).includes('max'))\r\n     ) {\r\n       throw new Error('All rules must include max');\r\n     }\r\n-    /* if (\r\n+    if (\r\n       Object.values(rules).some((rule) => rule.max < rule.min)\r\n     ) {\r\n       throw new Error('Max must not be lower than min');\r\n-    } */\r\n+    }\r\n   }\r\n \r\n   validate(obj) {\r\n     const errors = [];\r\n"
+                },
+                {
+                    "date": 1681743721055,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -20,8 +20,14 @@\n       Object.values(rules).some((rule) => rule.max < rule.min)\r\n     ) {\r\n       throw new Error('Max must not be lower than min');\r\n     }\r\n+    if (\r\n+      Object.values(rules).some((rule) =>\r\n+        !['integer', 'string'].includes(rule.type.trim().toLowerCase()))\r\n+    ) {\r\n+      throw new Error('Type must be string or number');\r\n+    }\r\n   }\r\n \r\n   validate(obj) {\r\n     const errors = [];\r\n"
+                },
+                {
+                    "date": 1681743855071,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -15,13 +15,13 @@\n       Object.values(rules).some((rule) => !Object.keys(rule).includes('max'))\r\n     ) {\r\n       throw new Error('All rules must include max');\r\n     }\r\n-    if (\r\n+/*     if (\r\n       Object.values(rules).some((rule) => rule.max < rule.min)\r\n     ) {\r\n       throw new Error('Max must not be lower than min');\r\n-    }\r\n+    } */\r\n     if (\r\n       Object.values(rules).some((rule) =>\r\n         !['integer', 'string'].includes(rule.type.trim().toLowerCase()))\r\n     ) {\r\n"
+                },
+                {
+                    "date": 1681743876427,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -15,16 +15,18 @@\n       Object.values(rules).some((rule) => !Object.keys(rule).includes('max'))\r\n     ) {\r\n       throw new Error('All rules must include max');\r\n     }\r\n-/*     if (\r\n+    /*     if (\r\n       Object.values(rules).some((rule) => rule.max < rule.min)\r\n     ) {\r\n       throw new Error('Max must not be lower than min');\r\n     } */\r\n     if (\r\n-      Object.values(rules).some((rule) =>\r\n-        !['integer', 'string'].includes(rule.type.trim().toLowerCase()))\r\n+      Object.values(rules).some(\r\n+          (rule) =>\r\n+            !['integer', 'string'].includes(rule.type.trim().toLowerCase()),\r\n+      )\r\n     ) {\r\n       throw new Error('Type must be string or number');\r\n     }\r\n   }\r\n"
+                },
+                {
+                    "date": 1681744820691,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -15,18 +15,16 @@\n       Object.values(rules).some((rule) => !Object.keys(rule).includes('max'))\r\n     ) {\r\n       throw new Error('All rules must include max');\r\n     }\r\n-    /*     if (\r\n+    if (\r\n       Object.values(rules).some((rule) => rule.max < rule.min)\r\n     ) {\r\n       throw new Error('Max must not be lower than min');\r\n-    } */\r\n+    }\r\n     if (\r\n-      Object.values(rules).some(\r\n-          (rule) =>\r\n-            !['integer', 'string'].includes(rule.type.trim().toLowerCase()),\r\n-      )\r\n+      Object.values(rules).some((rule) =>\r\n+        !['integer', 'string'].includes(rule.type.trim().toLowerCase()))\r\n     ) {\r\n       throw new Error('Type must be string or number');\r\n     }\r\n   }\r\n"
+                },
+                {
+                    "date": 1681744919237,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -26,8 +26,13 @@\n         !['integer', 'string'].includes(rule.type.trim().toLowerCase()))\r\n     ) {\r\n       throw new Error('Type must be string or number');\r\n     }\r\n+    if (\r\n+      Object.values(rules).some((rule) => typeof rule.max != 'number')\r\n+    ) {\r\n+      throw new Error('Max must be number');\r\n+    }\r\n   }\r\n \r\n   validate(obj) {\r\n     const errors = [];\r\n"
+                },
+                {
+                    "date": 1681745073022,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -31,8 +31,13 @@\n       Object.values(rules).some((rule) => typeof rule.max != 'number')\r\n     ) {\r\n       throw new Error('Max must be number');\r\n     }\r\n+    if (\r\n+      Object.values(rules).some((rule) => typeof rule.max != 'number')\r\n+    ) {\r\n+      throw new Error('Min must be number');\r\n+    }\r\n   }\r\n \r\n   validate(obj) {\r\n     const errors = [];\r\n"
+                },
+                {
+                    "date": 1681745162352,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -32,9 +32,9 @@\n     ) {\r\n       throw new Error('Max must be number');\r\n     }\r\n     if (\r\n-      Object.values(rules).some((rule) => typeof rule.max != 'number')\r\n+      Object.values(rules).some((rule) => typeof rule.min != 'number')\r\n     ) {\r\n       throw new Error('Min must be number');\r\n     }\r\n   }\r\n"
+                },
+                {
+                    "date": 1681747955067,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -15,27 +15,23 @@\n       Object.values(rules).some((rule) => !Object.keys(rule).includes('max'))\r\n     ) {\r\n       throw new Error('All rules must include max');\r\n     }\r\n-    if (\r\n-      Object.values(rules).some((rule) => rule.max < rule.min)\r\n-    ) {\r\n+    if (Object.values(rules).some((rule) => rule.max < rule.min)) {\r\n       throw new Error('Max must not be lower than min');\r\n     }\r\n     if (\r\n-      Object.values(rules).some((rule) =>\r\n-        !['integer', 'string'].includes(rule.type.trim().toLowerCase()))\r\n+      Object.values(rules).some((rule) => {\r\n+        console.log(rule.type);\r\n+        return !['integer', 'string'].includes(rule.type.trim().toLowerCase());\r\n+      })\r\n     ) {\r\n       throw new Error('Type must be string or number');\r\n     }\r\n-    if (\r\n-      Object.values(rules).some((rule) => typeof rule.max != 'number')\r\n-    ) {\r\n+    if (Object.values(rules).some((rule) => typeof rule.max != 'number')) {\r\n       throw new Error('Max must be number');\r\n     }\r\n-    if (\r\n-      Object.values(rules).some((rule) => typeof rule.min != 'number')\r\n-    ) {\r\n+    if (Object.values(rules).some((rule) => typeof rule.min != 'number')) {\r\n       throw new Error('Min must be number');\r\n     }\r\n   }\r\n \r\n"
+                },
+                {
+                    "date": 1681747977033,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -20,9 +20,9 @@\n       throw new Error('Max must not be lower than min');\r\n     }\r\n     if (\r\n       Object.values(rules).some((rule) => {\r\n-        console.log(rule.type);\r\n+        console.log(JSON.stringify(rule), rule.type);\r\n         return !['integer', 'string'].includes(rule.type.trim().toLowerCase());\r\n       })\r\n     ) {\r\n       throw new Error('Type must be string or number');\r\n"
+                },
+                {
+                    "date": 1681748812844,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -20,13 +20,17 @@\n       throw new Error('Max must not be lower than min');\r\n     }\r\n     if (\r\n       Object.values(rules).some((rule) => {\r\n-        console.log(JSON.stringify(rule), rule.type);\r\n-        return !['integer', 'string'].includes(rule.type.trim().toLowerCase());\r\n+        const iss = !['integer', 'string'].includes(\r\n+            rule.type.trim().toLowerCase(),\r\n+        );\r\n+        if (iss) {\r\n+          console.log(rule.type);\r\n+          throw new Error('Type must be string or number');\r\n+        }\r\n       })\r\n     ) {\r\n-      throw new Error('Type must be string or number');\r\n     }\r\n     if (Object.values(rules).some((rule) => typeof rule.max != 'number')) {\r\n       throw new Error('Max must be number');\r\n     }\r\n"
+                },
+                {
+                    "date": 1681748862890,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -24,9 +24,9 @@\n         const iss = !['integer', 'string'].includes(\r\n             rule.type.trim().toLowerCase(),\r\n         );\r\n         if (iss) {\r\n-          console.log(rule.type);\r\n+          console.log('lalala', rule.type);\r\n           throw new Error('Type must be string or number');\r\n         }\r\n       })\r\n     ) {\r\n"
+                },
+                {
+                    "date": 1681834663423,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -19,17 +19,12 @@\n     if (Object.values(rules).some((rule) => rule.max < rule.min)) {\r\n       throw new Error('Max must not be lower than min');\r\n     }\r\n     if (\r\n-      Object.values(rules).some((rule) => {\r\n-        const iss = !['integer', 'string'].includes(\r\n+      Object.values(rules).some((rule) => \r\n+       !['integer', 'string'].includes(\r\n             rule.type.trim().toLowerCase(),\r\n-        );\r\n-        if (iss) {\r\n-          console.log('lalala', rule.type);\r\n-          throw new Error('Type must be string or number');\r\n-        }\r\n-      })\r\n+        )) throw new Error('Type must be string or number')\r\n     ) {\r\n     }\r\n     if (Object.values(rules).some((rule) => typeof rule.max != 'number')) {\r\n       throw new Error('Max must be number');\r\n"
+                },
+                {
+                    "date": 1681834716368,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -19,14 +19,16 @@\n     if (Object.values(rules).some((rule) => rule.max < rule.min)) {\r\n       throw new Error('Max must not be lower than min');\r\n     }\r\n     if (\r\n-      Object.values(rules).some((rule) => \r\n-       !['integer', 'string'].includes(\r\n-            rule.type.trim().toLowerCase(),\r\n-        )) throw new Error('Type must be string or number')\r\n+      Object.values(rules).some(\r\n+          (rule) =>\r\n+            !['integer', 'string'].includes(rule.type.trim().toLowerCase())\r\n+      )\r\n     ) {\r\n+      throw new Error('Type must be string or number');\r\n     }\r\n+\r\n     if (Object.values(rules).some((rule) => typeof rule.max != 'number')) {\r\n       throw new Error('Max must be number');\r\n     }\r\n     if (Object.values(rules).some((rule) => typeof rule.min != 'number')) {\r\n"
+                },
+                {
+                    "date": 1681834746028,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -21,9 +21,9 @@\n     }\r\n     if (\r\n       Object.values(rules).some(\r\n           (rule) =>\r\n-            !['integer', 'string'].includes(rule.type.trim().toLowerCase())\r\n+            !['integer', 'string'].includes(rule.type.trim().toLowerCase()),\r\n       )\r\n     ) {\r\n       throw new Error('Type must be string or number');\r\n     }\r\n"
+                },
+                {
+                    "date": 1681834824636,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -18,8 +18,9 @@\n     }\r\n     if (Object.values(rules).some((rule) => rule.max < rule.min)) {\r\n       throw new Error('Max must not be lower than min');\r\n     }\r\n+    console.log(Object.values(rules));\r\n     if (\r\n       Object.values(rules).some(\r\n           (rule) =>\r\n             !['integer', 'string'].includes(rule.type.trim().toLowerCase()),\r\n"
+                },
+                {
+                    "date": 1681835050201,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -20,12 +20,12 @@\n       throw new Error('Max must not be lower than min');\r\n     }\r\n     console.log(Object.values(rules));\r\n     if (\r\n-      Object.values(rules).some(\r\n-          (rule) =>\r\n-            !['integer', 'string'].includes(rule.type.trim().toLowerCase()),\r\n-      )\r\n+      Object.values(rules).some((rule) => {\r\n+        console.log(rule.type.trim().toLowerCase())\r\n+        return !['integer', 'string'].includes(rule.type.trim().toLowerCase());\r\n+      })\r\n     ) {\r\n       throw new Error('Type must be string or number');\r\n     }\r\n \r\n"
+                },
+                {
+                    "date": 1681835060013,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -21,9 +21,9 @@\n     }\r\n     console.log(Object.values(rules));\r\n     if (\r\n       Object.values(rules).some((rule) => {\r\n-        console.log(rule.type.trim().toLowerCase())\r\n+        console.log(rule.type.trim().toLowerCase());\r\n         return !['integer', 'string'].includes(rule.type.trim().toLowerCase());\r\n       })\r\n     ) {\r\n       throw new Error('Type must be string or number');\r\n"
+                },
+                {
+                    "date": 1681835111548,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -22,8 +22,9 @@\n     console.log(Object.values(rules));\r\n     if (\r\n       Object.values(rules).some((rule) => {\r\n         console.log(rule.type.trim().toLowerCase());\r\n+        console.log(['integer', 'string'].includes(rule.type.trim().toLowerCase()));\r\n         return !['integer', 'string'].includes(rule.type.trim().toLowerCase());\r\n       })\r\n     ) {\r\n       throw new Error('Type must be string or number');\r\n"
+                },
+                {
+                    "date": 1681835200201,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -18,15 +18,13 @@\n     }\r\n     if (Object.values(rules).some((rule) => rule.max < rule.min)) {\r\n       throw new Error('Max must not be lower than min');\r\n     }\r\n-    console.log(Object.values(rules));\r\n     if (\r\n-      Object.values(rules).some((rule) => {\r\n-        console.log(rule.type.trim().toLowerCase());\r\n-        console.log(['integer', 'string'].includes(rule.type.trim().toLowerCase()));\r\n-        return !['integer', 'string'].includes(rule.type.trim().toLowerCase());\r\n-      })\r\n+      Object.values(rules).some(\r\n+          (rule) =>\r\n+            !['integer', 'string'].includes(rule.type.trim().toLowerCase()),\r\n+      )\r\n     ) {\r\n       throw new Error('Type must be string or number');\r\n     }\r\n \r\n"
+                },
+                {
+                    "date": 1681835259792,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -21,9 +21,9 @@\n     }\r\n     if (\r\n       Object.values(rules).some(\r\n           (rule) =>\r\n-            !['integer', 'string'].includes(rule.type.trim().toLowerCase()),\r\n+            !['number', 'string'].includes(rule.type.trim().toLowerCase()),\r\n       )\r\n     ) {\r\n       throw new Error('Type must be string or number');\r\n     }\r\n"
+                },
+                {
+                    "date": 1681836478323,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -46,9 +46,8 @@\n       const type = typeof value;\r\n \r\n       if (type !== rules.type) {\r\n         errors.push({field, error: `expect ${rules.type}, got ${type}`});\r\n-        return errors;\r\n       }\r\n \r\n       switch (type) {\r\n         case 'string':\r\n"
+                },
+                {
+                    "date": 1681836816189,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -44,10 +44,13 @@\n \r\n       const value = obj[field];\r\n       const type = typeof value;\r\n \r\n-      if (type !== rules.type) {\r\n+      const wrongType = type !== rules.type\r\n+\r\n+      if (wrongType) {\r\n         errors.push({field, error: `expect ${rules.type}, got ${type}`});\r\n+        continue;\r\n       }\r\n \r\n       switch (type) {\r\n         case 'string':\r\n"
+                },
+                {
+                    "date": 1681836834077,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -44,9 +44,9 @@\n \r\n       const value = obj[field];\r\n       const type = typeof value;\r\n \r\n-      const wrongType = type !== rules.type\r\n+      const wrongType = type !== rules.type;\r\n \r\n       if (wrongType) {\r\n         errors.push({field, error: `expect ${rules.type}, got ${type}`});\r\n         continue;\r\n"
+                }
+            ],
+            "date": 1681741438410,
+            "name": "Commit-0",
+            "content": "module.exports = class Validator {\r\n  constructor(rules) {\r\n    this.rules = rules;\r\n    if (\r\n      Object.values(rules).some((rule) => !Object.keys(rule).includes('type'))\r\n    ) {\r\n      throw new Error('All rules must include type');\r\n    }\r\n  }\r\n\r\n  validate(obj) {\r\n    const errors = [];\r\n\r\n    for (const field of Object.keys(this.rules)) {\r\n      const rules = this.rules[field];\r\n\r\n      const value = obj[field];\r\n      const type = typeof value;\r\n\r\n      if (type !== rules.type) {\r\n        errors.push({field, error: `expect ${rules.type}, got ${type}`});\r\n        return errors;\r\n      }\r\n\r\n      switch (type) {\r\n        case 'string':\r\n          if (value.length < rules.min) {\r\n            errors.push({\r\n              field,\r\n              error: `too short, expect ${rules.min}, got ${value.length}`,\r\n            });\r\n          }\r\n          if (value.length > rules.max) {\r\n            errors.push({\r\n              field,\r\n              error: `too long, expect ${rules.max}, got ${value.length}`,\r\n            });\r\n          }\r\n          break;\r\n        case 'number':\r\n          if (value < rules.min) {\r\n            errors.push({\r\n              field,\r\n              error: `too little, expect ${rules.min}, got ${value}`,\r\n            });\r\n          }\r\n          if (value > rules.max) {\r\n            errors.push({\r\n              field,\r\n              error: `too big, expect ${rules.min}, got ${value}`,\r\n            });\r\n          }\r\n          break;\r\n      }\r\n    }\r\n\r\n    return errors;\r\n  }\r\n};\r\n"
+        }
+    ]
+}
