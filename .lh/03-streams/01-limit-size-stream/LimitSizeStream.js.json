@@ -1,0 +1,22 @@
+{
+    "sourceFile": "03-streams/01-limit-size-stream/LimitSizeStream.js",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 1,
+            "patches": [
+                {
+                    "date": 1681377221800,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                },
+                {
+                    "date": 1681995769868,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -3,10 +3,19 @@\n \r\n class LimitSizeStream extends stream.Transform {\r\n   constructor(options) {\r\n     super(options);\r\n+    this.maxSize = options.limit;\r\n+    this.currentSize = 0;\r\n   }\r\n \r\n-  _transform(chunk, encoding, callback) {}\r\n+  _transform(chunk, encoding, callback) {\r\n+    this.currentSize += chunk.byteLength;\r\n+    let err = null;\r\n+    if (this.currentSize > this.maxSize) {\r\n+      err = new LimitExceededError('Max size exceeded');\r\n+    }\r\n+    callback(err, chunk);\r\n+  }\r\n }\r\n \r\n module.exports = LimitSizeStream;\r\n"
+                }
+            ],
+            "date": 1681377221800,
+            "name": "Commit-0",
+            "content": "const stream = require('stream');\r\nconst LimitExceededError = require('./LimitExceededError');\r\n\r\nclass LimitSizeStream extends stream.Transform {\r\n  constructor(options) {\r\n    super(options);\r\n  }\r\n\r\n  _transform(chunk, encoding, callback) {}\r\n}\r\n\r\nmodule.exports = LimitSizeStream;\r\n"
+        }
+    ]
+}

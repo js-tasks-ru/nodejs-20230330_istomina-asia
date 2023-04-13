@@ -1,0 +1,130 @@
+{
+    "sourceFile": "05-koajs/01-chat-app/app.js",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 28,
+            "patches": [
+                {
+                    "date": 1681996851839,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                },
+                {
+                    "date": 1682009285054,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -7,15 +7,15 @@\n \r\n const Router = require('koa-router');\r\n const router = new Router();\r\n \r\n-const messages = []\r\n+const messages = [];\r\n \r\n-router.get('/subscribe', async (ctx, next) => {\r\n-});\r\n+router.get('/subscribe', async (ctx, next) => {});\r\n \r\n router.post('/publish', async (ctx, next) => {\r\n-    messages.push(message)\r\n+  console.log(ctx);\r\n+  messages.push(message);\r\n });\r\n \r\n app.use(router.routes());\r\n \r\n"
+                },
+                {
+                    "date": 1682009418974,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -9,9 +9,12 @@\n const router = new Router();\r\n \r\n const messages = [];\r\n \r\n-router.get('/subscribe', async (ctx, next) => {});\r\n+router.get('/subscribe', async (ctx, next) => {\r\n+  console.log('lsalala');\r\n+  \r\n+});\r\n \r\n router.post('/publish', async (ctx, next) => {\r\n   console.log(ctx);\r\n   messages.push(message);\r\n"
+                },
+                {
+                    "date": 1682009449338,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -11,14 +11,15 @@\n const messages = [];\r\n \r\n router.get('/subscribe', async (ctx, next) => {\r\n   console.log('lsalala');\r\n-  \r\n+  ctx.body = 'hohohohoh';\r\n });\r\n \r\n router.post('/publish', async (ctx, next) => {\r\n   console.log(ctx);\r\n   messages.push(message);\r\n+  ctx.body = 'hohohohoh';\r\n });\r\n \r\n app.use(router.routes());\r\n \r\n"
+                },
+                {
+                    "date": 1682009616130,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -10,10 +10,8 @@\n \r\n const messages = [];\r\n \r\n router.get('/subscribe', async (ctx, next) => {\r\n-  console.log('lsalala');\r\n-  ctx.body = 'hohohohoh';\r\n });\r\n \r\n router.post('/publish', async (ctx, next) => {\r\n   console.log(ctx);\r\n"
+                },
+                {
+                    "date": 1682010135546,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -7,17 +7,27 @@\n \r\n const Router = require('koa-router');\r\n const router = new Router();\r\n \r\n-const messages = [];\r\n+let newMessageReceived = false;\r\n+let i = 1;\r\n \r\n router.get('/subscribe', async (ctx, next) => {\r\n+  await new Promise((res) => {\r\n+    setInterval(() => {\r\n+      if (newMessageReceived) {\r\n+        newMessageReceived = false;\r\n+        res();\r\n+      }\r\n+    }, 1);\r\n+  });\r\n+  ctx.body = ctx.message;\r\n });\r\n \r\n router.post('/publish', async (ctx, next) => {\r\n   console.log(ctx);\r\n-  messages.push(message);\r\n-  ctx.body = 'hohohohoh';\r\n+  ctx.message = 'hohohohoh ' + i++;\r\n+  newMessageReceived = true;\r\n });\r\n \r\n app.use(router.routes());\r\n \r\n"
+                },
+                {
+                    "date": 1682010406984,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -24,9 +24,10 @@\n });\r\n \r\n router.post('/publish', async (ctx, next) => {\r\n   console.log(ctx);\r\n-  ctx.message = 'hohohohoh ' + i++;\r\n+  ctx.status = 200;\r\n+  ctx.body = 'hohohohoh ' + i++;\r\n   newMessageReceived = true;\r\n });\r\n \r\n app.use(router.routes());\r\n"
+                },
+                {
+                    "date": 1682010501977,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -19,9 +19,10 @@\n         res();\r\n       }\r\n     }, 1);\r\n   });\r\n-  ctx.body = ctx.message;\r\n+  ctx.status = 200;\r\n+  ctx.body = 'yeyeye';\r\n });\r\n \r\n router.post('/publish', async (ctx, next) => {\r\n   console.log(ctx);\r\n"
+                },
+                {
+                    "date": 1682010547574,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -15,14 +15,13 @@\n   await new Promise((res) => {\r\n     setInterval(() => {\r\n       if (newMessageReceived) {\r\n         newMessageReceived = false;\r\n-        res();\r\n+        ctx.status = 200;\r\n+        ctx.body = 'yeyeye';\r\n       }\r\n     }, 1);\r\n   });\r\n-  ctx.status = 200;\r\n-  ctx.body = 'yeyeye';\r\n });\r\n \r\n router.post('/publish', async (ctx, next) => {\r\n   console.log(ctx);\r\n"
+                },
+                {
+                    "date": 1682010596135,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -14,8 +14,9 @@\n router.get('/subscribe', async (ctx, next) => {\r\n   await new Promise((res) => {\r\n     setInterval(() => {\r\n       if (newMessageReceived) {\r\n+        console.log('lkjlkjlkjlkjlkj');\r\n         newMessageReceived = false;\r\n         ctx.status = 200;\r\n         ctx.body = 'yeyeye';\r\n       }\r\n"
+                },
+                {
+                    "date": 1682010684341,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -18,8 +18,9 @@\n         console.log('lkjlkjlkjlkjlkj');\r\n         newMessageReceived = false;\r\n         ctx.status = 200;\r\n         ctx.body = 'yeyeye';\r\n+        next();\r\n       }\r\n     }, 1);\r\n   });\r\n });\r\n"
+                },
+                {
+                    "date": 1682010705519,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -18,9 +18,8 @@\n         console.log('lkjlkjlkjlkjlkj');\r\n         newMessageReceived = false;\r\n         ctx.status = 200;\r\n         ctx.body = 'yeyeye';\r\n-        next();\r\n       }\r\n     }, 1);\r\n   });\r\n });\r\n"
+                },
+                {
+                    "date": 1682010813231,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -16,13 +16,14 @@\n     setInterval(() => {\r\n       if (newMessageReceived) {\r\n         console.log('lkjlkjlkjlkjlkj');\r\n         newMessageReceived = false;\r\n-        ctx.status = 200;\r\n-        ctx.body = 'yeyeye';\r\n+        res();\r\n       }\r\n     }, 1);\r\n   });\r\n+  ctx.status = 200;\r\n+  ctx.body = 'yeyeye';\r\n });\r\n \r\n router.post('/publish', async (ctx, next) => {\r\n   console.log(ctx);\r\n"
+                },
+                {
+                    "date": 1682011143121,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -11,23 +11,24 @@\n let newMessageReceived = false;\r\n let i = 1;\r\n \r\n router.get('/subscribe', async (ctx, next) => {\r\n+  let interval;\r\n   await new Promise((res) => {\r\n-    setInterval(() => {\r\n+    interval = setInterval(() => {\r\n       if (newMessageReceived) {\r\n         console.log('lkjlkjlkjlkjlkj');\r\n         newMessageReceived = false;\r\n         res();\r\n       }\r\n     }, 1);\r\n+    clearInterval(interval);\r\n   });\r\n   ctx.status = 200;\r\n   ctx.body = 'yeyeye';\r\n });\r\n \r\n router.post('/publish', async (ctx, next) => {\r\n-  console.log(ctx);\r\n   ctx.status = 200;\r\n   ctx.body = 'hohohohoh ' + i++;\r\n   newMessageReceived = true;\r\n });\r\n"
+                },
+                {
+                    "date": 1682011184863,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -14,8 +14,9 @@\n router.get('/subscribe', async (ctx, next) => {\r\n   let interval;\r\n   await new Promise((res) => {\r\n     interval = setInterval(() => {\r\n+        console.log('kj');\r\n       if (newMessageReceived) {\r\n         console.log('lkjlkjlkjlkjlkj');\r\n         newMessageReceived = false;\r\n         res();\r\n"
+                },
+                {
+                    "date": 1682011207397,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -14,9 +14,9 @@\n router.get('/subscribe', async (ctx, next) => {\r\n   let interval;\r\n   await new Promise((res) => {\r\n     interval = setInterval(() => {\r\n-        console.log('kj');\r\n+      console.log('kj');\r\n       if (newMessageReceived) {\r\n         console.log('lkjlkjlkjlkjlkj');\r\n         newMessageReceived = false;\r\n         res();\r\n"
+                },
+                {
+                    "date": 1682011277020,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -28,8 +28,9 @@\n   ctx.body = 'yeyeye';\r\n });\r\n \r\n router.post('/publish', async (ctx, next) => {\r\n+  console.log(newMessageReceived);\r\n   ctx.status = 200;\r\n   ctx.body = 'hohohohoh ' + i++;\r\n   newMessageReceived = true;\r\n });\r\n"
+                },
+                {
+                    "date": 1682063346827,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -18,9 +18,9 @@\n       console.log('kj');\r\n       if (newMessageReceived) {\r\n         console.log('lkjlkjlkjlkjlkj');\r\n         newMessageReceived = false;\r\n-        res();\r\n+        res();  \r\n       }\r\n     }, 1);\r\n     clearInterval(interval);\r\n   });\r\n"
+                },
+                {
+                    "date": 1682063365973,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -32,8 +32,9 @@\n   console.log(newMessageReceived);\r\n   ctx.status = 200;\r\n   ctx.body = 'hohohohoh ' + i++;\r\n   newMessageReceived = true;\r\n+  console.log(newMessageReceived);\r\n });\r\n \r\n app.use(router.routes());\r\n \r\n"
+                },
+                {
+                    "date": 1682063411874,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -18,9 +18,9 @@\n       console.log('kj');\r\n       if (newMessageReceived) {\r\n         console.log('lkjlkjlkjlkjlkj');\r\n         newMessageReceived = false;\r\n-        res();  \r\n+        res();\r\n       }\r\n     }, 1);\r\n     clearInterval(interval);\r\n   });\r\n"
+                },
+                {
+                    "date": 1682063565268,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -12,9 +12,11 @@\n let i = 1;\r\n \r\n router.get('/subscribe', async (ctx, next) => {\r\n   let interval;\r\n+  console.log('we here');\r\n   await new Promise((res) => {\r\n+    console.log('and here');\r\n     interval = setInterval(() => {\r\n       console.log('kj');\r\n       if (newMessageReceived) {\r\n         console.log('lkjlkjlkjlkjlkj');\r\n"
+                },
+                {
+                    "date": 1682063595885,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -20,12 +20,12 @@\n       console.log('kj');\r\n       if (newMessageReceived) {\r\n         console.log('lkjlkjlkjlkjlkj');\r\n         newMessageReceived = false;\r\n+        clearInterval(interval);\r\n         res();\r\n       }\r\n     }, 1);\r\n-    clearInterval(interval);\r\n   });\r\n   ctx.status = 200;\r\n   ctx.body = 'yeyeye';\r\n });\r\n"
+                },
+                {
+                    "date": 1682063622162,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -11,16 +11,12 @@\n let newMessageReceived = false;\r\n let i = 1;\r\n \r\n router.get('/subscribe', async (ctx, next) => {\r\n-  let interval;\r\n   console.log('we here');\r\n   await new Promise((res) => {\r\n-    console.log('and here');\r\n     interval = setInterval(() => {\r\n-      console.log('kj');\r\n       if (newMessageReceived) {\r\n-        console.log('lkjlkjlkjlkjlkj');\r\n         newMessageReceived = false;\r\n         clearInterval(interval);\r\n         res();\r\n       }\r\n"
+                },
+                {
+                    "date": 1682063653776,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -11,9 +11,9 @@\n let newMessageReceived = false;\r\n let i = 1;\r\n \r\n router.get('/subscribe', async (ctx, next) => {\r\n-  console.log('we here');\r\n+  let interval;\r\n   await new Promise((res) => {\r\n     interval = setInterval(() => {\r\n       if (newMessageReceived) {\r\n         newMessageReceived = false;\r\n"
+                },
+                {
+                    "date": 1682063678041,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -30,9 +30,8 @@\n   console.log(newMessageReceived);\r\n   ctx.status = 200;\r\n   ctx.body = 'hohohohoh ' + i++;\r\n   newMessageReceived = true;\r\n-  console.log(newMessageReceived);\r\n });\r\n \r\n app.use(router.routes());\r\n \r\n"
+                },
+                {
+                    "date": 1682063764229,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -26,9 +26,9 @@\n   ctx.body = 'yeyeye';\r\n });\r\n \r\n router.post('/publish', async (ctx, next) => {\r\n-  console.log(newMessageReceived);\r\n+  console.log(ctx.request);\r\n   ctx.status = 200;\r\n   ctx.body = 'hohohohoh ' + i++;\r\n   newMessageReceived = true;\r\n });\r\n"
+                },
+                {
+                    "date": 1682063906685,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -26,11 +26,10 @@\n   ctx.body = 'yeyeye';\r\n });\r\n \r\n router.post('/publish', async (ctx, next) => {\r\n-  console.log(ctx.request);\r\n   ctx.status = 200;\r\n-  ctx.body = 'hohohohoh ' + i++;\r\n+  ctx.body = JSON.stringify(ctx.request);\r\n   newMessageReceived = true;\r\n });\r\n \r\n app.use(router.routes());\r\n"
+                },
+                {
+                    "date": 1682063988998,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -27,9 +27,9 @@\n });\r\n \r\n router.post('/publish', async (ctx, next) => {\r\n   ctx.status = 200;\r\n-  ctx.body = JSON.stringify(ctx.request);\r\n+  ctx.body = JSON.stringify(ctx.request.body);\r\n   newMessageReceived = true;\r\n });\r\n \r\n app.use(router.routes());\r\n"
+                },
+                {
+                    "date": 1682064080260,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -8,10 +8,9 @@\n const Router = require('koa-router');\r\n const router = new Router();\r\n \r\n let newMessageReceived = false;\r\n-let i = 1;\r\n-\r\n+let receivedMessage = '';\r\n router.get('/subscribe', async (ctx, next) => {\r\n   let interval;\r\n   await new Promise((res) => {\r\n     interval = setInterval(() => {\r\n@@ -22,14 +21,14 @@\n       }\r\n     }, 1);\r\n   });\r\n   ctx.status = 200;\r\n-  ctx.body = 'yeyeye';\r\n+  ctx.body = receivedMessage;\r\n });\r\n \r\n router.post('/publish', async (ctx, next) => {\r\n   ctx.status = 200;\r\n-  ctx.body = JSON.stringify(ctx.request.body);\r\n+  receivedMessage = ctx.request.body.message;\r\n   newMessageReceived = true;\r\n });\r\n \r\n app.use(router.routes());\r\n"
+                }
+            ],
+            "date": 1681996851839,
+            "name": "Commit-0",
+            "content": "const path = require('path');\r\nconst Koa = require('koa');\r\nconst app = new Koa();\r\n\r\napp.use(require('koa-static')(path.join(__dirname, 'public')));\r\napp.use(require('koa-bodyparser')());\r\n\r\nconst Router = require('koa-router');\r\nconst router = new Router();\r\n\r\nconst messages = []\r\n\r\nrouter.get('/subscribe', async (ctx, next) => {\r\n});\r\n\r\nrouter.post('/publish', async (ctx, next) => {\r\n    messages.push(message)\r\n});\r\n\r\napp.use(router.routes());\r\n\r\nmodule.exports = app;\r\n"
+        }
+    ]
+}

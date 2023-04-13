@@ -1,0 +1,18 @@
+{
+    "sourceFile": "03-streams/01-limit-size-stream/LimitExceededError.js",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 0,
+            "patches": [
+                {
+                    "date": 1681373947770,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                }
+            ],
+            "date": 1681373947770,
+            "name": "Commit-0",
+            "content": "class LimitExceededError extends Error {\n  constructor() {\n    super(\"Limit has been exceeded.\");\n\n    this.name = this.constructor.name;\n    Error.captureStackTrace(this, this.constructor);\n\n    this.code = \"LIMIT_EXCEEDED\";\n  }\n}\n\nmodule.exports = LimitExceededError;\n"
+        }
+    ]
+}
