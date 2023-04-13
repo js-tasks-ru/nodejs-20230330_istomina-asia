@@ -1,0 +1,18 @@
+{
+    "sourceFile": "03-streams/01-limit-size-stream/LimitSizeStream.js",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 0,
+            "patches": [
+                {
+                    "date": 1681377221800,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                }
+            ],
+            "date": 1681377221800,
+            "name": "Commit-0",
+            "content": "const stream = require('stream');\r\nconst LimitExceededError = require('./LimitExceededError');\r\n\r\nclass LimitSizeStream extends stream.Transform {\r\n  constructor(options) {\r\n    super(options);\r\n  }\r\n\r\n  _transform(chunk, encoding, callback) {}\r\n}\r\n\r\nmodule.exports = LimitSizeStream;\r\n"
+        }
+    ]
+}

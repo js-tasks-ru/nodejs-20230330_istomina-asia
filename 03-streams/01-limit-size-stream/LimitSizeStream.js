@@ -6,9 +6,7 @@ class LimitSizeStream extends stream.Transform {
     super(options);
   }
 
-  _transform(chunk, encoding, callback) {
-
-  }
+  _transform(chunk, encoding, callback) {}
 }
 
 module.exports = LimitSizeStream;
