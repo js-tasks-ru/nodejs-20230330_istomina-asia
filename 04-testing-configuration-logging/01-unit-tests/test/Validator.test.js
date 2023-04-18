@@ -3,6 +3,7 @@ const expect = require('chai').expect;
 
 describe('testing-configuration-logging/unit-tests', () => {
   describe('Validator', () => {
+
     describe('Проверка конструктора', () => {
       it('все правила должны содержать поля type', () => {
         const test = () => {
@@ -152,3 +153,4 @@ describe('testing-configuration-logging/unit-tests', () => {
     });
   });
 });
+
