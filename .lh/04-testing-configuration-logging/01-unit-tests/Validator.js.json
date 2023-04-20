@@ -3,7 +3,7 @@
     "activeCommit": 0,
     "commits": [
         {
-            "activePatchIndex": 27,
+            "activePatchIndex": 28,
             "patches": [
                 {
                     "date": 1681741438410,
@@ -116,6 +116,10 @@
                 {
                     "date": 1681836834077,
                     "content": "Index: \n===================================================================\n--- \n+++ \n@@ -44,9 +44,9 @@\n \r\n       const value = obj[field];\r\n       const type = typeof value;\r\n \r\n-      const wrongType = type !== rules.type\r\n+      const wrongType = type !== rules.type;\r\n \r\n       if (wrongType) {\r\n         errors.push({field, error: `expect ${rules.type}, got ${type}`});\r\n         continue;\r\n"
+                },
+                {
+                    "date": 1681995909830,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -44,8 +44,9 @@\n \r\n       const value = obj[field];\r\n       const type = typeof value;\r\n \r\n+\r\n       const wrongType = type !== rules.type;\r\n \r\n       if (wrongType) {\r\n         errors.push({field, error: `expect ${rules.type}, got ${type}`});\r\n"
                 }
             ],
             "date": 1681741438410,

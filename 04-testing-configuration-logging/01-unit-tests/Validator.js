@@ -34,7 +34,6 @@ module.exports = class Validator {
     if (Object.values(rules).some((rule) => typeof rule.min != 'number')) {
       throw new Error('Min must be number');
     }
-
   }
 
   validate(obj) {
@@ -52,7 +51,6 @@ module.exports = class Validator {
       if (wrongType) {
         errors.push({field, error: `expect ${rules.type}, got ${type}`});
         continue;
-
       }
 
       switch (type) {
@@ -68,12 +66,10 @@ module.exports = class Validator {
               field,
               error: `too long, expect ${rules.max}, got ${value.length}`,
             });
-
           }
           break;
         case 'number':
           if (value < rules.min) {
-
             errors.push({
               field,
               error: `too little, expect ${rules.min}, got ${value}`,
