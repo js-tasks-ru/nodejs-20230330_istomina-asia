@@ -1,0 +1,26 @@
+{
+    "sourceFile": "05-koajs/01-chat-app/public/index.html",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 2,
+            "patches": [
+                {
+                    "date": 1682011009239,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                },
+                {
+                    "date": 1682011384899,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -31,8 +31,9 @@\n \r\n   subscribe();\r\n \r\n   function subscribe() {\r\n+    console.log('ojojoj');\r\n     const xhr = new XMLHttpRequest();\r\n \r\n     xhr.open(\"GET\", \"/subscribe?r=\" + Math.random(), true);\r\n \r\n@@ -41,9 +42,9 @@\n \r\n       const li = document.createElement('li');\r\n       li.textContent = this.responseText;\r\n       messages.appendChild(li);\r\n-      console.log('ojojoj');\r\n+      \r\n \r\n       subscribe();\r\n     };\r\n \r\n"
+                },
+                {
+                    "date": 1682064158629,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -31,9 +31,8 @@\n \r\n   subscribe();\r\n \r\n   function subscribe() {\r\n-    console.log('ojojoj');\r\n     const xhr = new XMLHttpRequest();\r\n \r\n     xhr.open(\"GET\", \"/subscribe?r=\" + Math.random(), true);\r\n \r\n@@ -43,9 +42,8 @@\n       const li = document.createElement('li');\r\n       li.textContent = this.responseText;\r\n       messages.appendChild(li);\r\n       \r\n-\r\n       subscribe();\r\n     };\r\n \r\n     xhr.onerror = xhr.onabort = function() {\r\n"
+                }
+            ],
+            "date": 1682011009239,
+            "name": "Commit-0",
+            "content": "<!DOCTYPE html>\r\n<html>\r\n<head>\r\n  <meta charset=\"utf-8\">\r\n  <link href=\"https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.4/css/bootstrap.min.css\" rel=\"stylesheet\">\r\n</head>\r\n<body class=\"container\">\r\n<p class=\"lead\">Добро пожаловать в чат!</p>\r\n\r\n<form id=\"publish\" class=\"form-inline\">\r\n  <input type=\"text\" name=\"message\"/>\r\n  <input type=\"submit\" class=\"btn btn-primary\" value=\"Отправить\"/>\r\n</form>\r\n\r\n<ul id=\"messages\"></ul>\r\n\r\n<script>\r\n\r\n  publish.onsubmit = function() {\r\n    const xhr = new XMLHttpRequest();\r\n\r\n    xhr.open(\"POST\", \"/publish\", true);\r\n\r\n    xhr.setRequestHeader('Content-Type', 'application/json;charset=utf-8');\r\n    xhr.send(JSON.stringify({message: this.elements.message.value}));\r\n\r\n    this.elements.message.value = '';\r\n\r\n    return false;\r\n  };\r\n\r\n  subscribe();\r\n\r\n  function subscribe() {\r\n    const xhr = new XMLHttpRequest();\r\n\r\n    xhr.open(\"GET\", \"/subscribe?r=\" + Math.random(), true);\r\n\r\n    xhr.onload = function() {\r\n      if(xhr.status != 200) return this.onerror();\r\n\r\n      const li = document.createElement('li');\r\n      li.textContent = this.responseText;\r\n      messages.appendChild(li);\r\n      console.log('ojojoj');\r\n\r\n      subscribe();\r\n    };\r\n\r\n    xhr.onerror = xhr.onabort = function() {\r\n      setTimeout(subscribe, 500);\r\n    };\r\n\r\n    xhr.send();\r\n  }\r\n\r\n</script>\r\n</body>\r\n</html>\r\n"
+        }
+    ]
+}
