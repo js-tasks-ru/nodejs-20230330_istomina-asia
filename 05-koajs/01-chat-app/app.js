@@ -29,7 +29,6 @@ router.post('/publish', async (ctx, next) => {
   ctx.status = 200;
   receivedMessage = ctx.request.body.message;
   newMessageReceived = true;
-
 });
 
 app.use(router.routes());
